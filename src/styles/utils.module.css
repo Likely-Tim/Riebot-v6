@@ -2,6 +2,10 @@
   display: none;
 }
 
+.display {
+  display: block;
+}
+
 .fadeIn {
   animation: fadeIn 0.5s linear forwards;
 }
