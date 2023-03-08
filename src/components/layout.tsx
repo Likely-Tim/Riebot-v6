@@ -43,15 +43,9 @@ function Navigation() {
 }
 
 function Dropdown({ isDropdownActive, isInitialLoad }: { isDropdownActive: boolean; isInitialLoad: boolean }) {
-  function handleAnimationEnd(event: React.AnimationEvent<HTMLDivElement>) {
-    if (event.animationName === 'fadeIn')
-      document.getElementById('headerDropdownMenu')?.classList.toggle(utilStyles.display);
-  }
-
   return (
     <div
       id="headerDropdownMenu"
-      onAnimationEnd={handleAnimationEnd}
       className={[
         styles.dropdownMenu,
         isDropdownActive ? utilStyles.fadeIn : utilStyles.fadeOut,
@@ -80,14 +74,14 @@ function DropdownMenuItem({ name, link }: { name: string; link: string }) {
 
 function DropdownSubmenu({ name, items }: { name: string; items: { name: string; link: string }[] }) {
   return (
-    <>
+    <div className={styles.dropdownSubMenu}>
       <div className={styles.dropdownMenuItem}>
         <p className={styles.dropdownMenuText}>{name}</p>
       </div>
       {items.map((item) => {
         return <DropdownSubmenuItem name={item.name} link={item.link}></DropdownSubmenuItem>;
       })}
-    </>
+    </div>
   );
 }
 

@@ -16,20 +16,24 @@
 
 @keyframes fadeIn {
   0% {
+    visibility: collapse;
     opacity: 0;
   }
 
   100% {
+    visibility: visible;
     opacity: 1;
   }
 }
 
 @keyframes fadeOut {
   0% {
+    visibility: visible;
     opacity: 1;
   }
 
   100% {
+    visibility: collapse;
     opacity: 0;
   }
 }
