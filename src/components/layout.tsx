@@ -13,7 +13,11 @@ function Header() {
 }
 
 function Title() {
-  return <p className={styles.title}>Riebot</p>;
+  return (
+    <Link href={'/'} className={styles.title}>
+      Riebot
+    </Link>
+  );
 }
 
 function Navigation() {
@@ -58,6 +62,14 @@ function Dropdown({ isDropdownActive, isInitialLoad }: { isDropdownActive: boole
         name="Discord"
         items={[{ name: 'Spotify', link: '/auth/discord?task=spotify' }]}
       ></DropdownSubmenu>
+      <DropdownSubmenu
+        name="Authentication"
+        items={[
+          { name: 'Spotify', link: '/auth/spotify' },
+          { name: 'MyAnimeList', link: '/auth/mal' }
+        ]}
+      ></DropdownSubmenu>
+      <DropdownSubmenu name="Anime" items={[{ name: 'Shows', link: '/anime/show' }]}></DropdownSubmenu>
     </div>
   );
 }
@@ -73,21 +85,40 @@ function DropdownMenuItem({ name, link }: { name: string; link: string }) {
 }
 
 function DropdownSubmenu({ name, items }: { name: string; items: { name: string; link: string }[] }) {
+  const [dropdownSubmenuClicked, setDropdownSubmenuClicked] = React.useState(false);
+
+  function handleClick() {
+    setDropdownSubmenuClicked(!dropdownSubmenuClicked);
+  }
+
   return (
     <div className={styles.dropdownSubMenu}>
-      <div className={styles.dropdownMenuItem}>
+      <div onClick={handleClick} className={styles.dropdownMenuItem}>
         <p className={styles.dropdownMenuText}>{name}</p>
+        <p
+          id={`dropdownSubmenuArrow_${name}`}
+          className={[styles.dropdownArrow, dropdownSubmenuClicked ? utilStyles.rotate : ''].join(' ')}
+        >
+          {'>'}
+        </p>
       </div>
-      {items.map((item) => {
-        return <DropdownSubmenuItem name={item.name} link={item.link}></DropdownSubmenuItem>;
+      {items.map((item, i) => {
+        return (
+          <DropdownSubmenuItem
+            name={item.name}
+            link={item.link}
+            isDisplayed={dropdownSubmenuClicked}
+            key={i}
+          ></DropdownSubmenuItem>
+        );
       })}
     </div>
   );
 }
 
-function DropdownSubmenuItem({ name, link }: { name: string; link: string }) {
+function DropdownSubmenuItem({ name, link, isDisplayed }: { name: string; link: string; isDisplayed: boolean }) {
   return (
-    <div className={styles.dropdownSubmenuItem}>
+    <div className={[styles.dropdownSubmenuItem, isDisplayed ? utilStyles.slideIn : utilStyles.slideOut].join(' ')}>
       <Link href={link} className={styles.dropdownMenuText}>
         {name}
       </Link>

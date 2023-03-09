@@ -14,6 +14,43 @@
   animation: fadeOut 0.5s linear forwards;
 }
 
+.rotate {
+  transition: 0.2s;
+  transform: rotate(3690deg)
+}
+
+.slideIn {
+  animation: slideIn 0.2s linear forwards;
+}
+
+.slideOut {
+  animation: slideOut 0.2s linear forwards
+}
+
+@keyframes slideIn {
+  0% {
+    visibility: collapse;
+    left: -10px;
+  }
+
+  100% {
+    visibility: visible;
+    left: 12px;
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    visibility: visible;
+    left: 12px;
+  }
+
+  100% {
+    visibility: collapse;
+    left: 200px;
+  }
+}
+
 @keyframes fadeIn {
   0% {
     visibility: collapse;
