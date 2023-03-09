@@ -86,8 +86,12 @@ function DropdownMenuItem({ name, link }: { name: string; link: string }) {
 
 function DropdownSubmenu({ name, items }: { name: string; items: { name: string; link: string }[] }) {
   const [dropdownSubmenuClicked, setDropdownSubmenuClicked] = React.useState(false);
+  const [initialSubmenuLoad, setinitialSubmenuLoad] = React.useState(true);
 
   function handleClick() {
+    if (initialSubmenuLoad) {
+      setinitialSubmenuLoad(!initialSubmenuLoad);
+    }
     setDropdownSubmenuClicked(!dropdownSubmenuClicked);
   }
 
@@ -108,6 +112,7 @@ function DropdownSubmenu({ name, items }: { name: string; items: { name: string;
             name={item.name}
             link={item.link}
             isDisplayed={dropdownSubmenuClicked}
+            isInitialLoad={initialSubmenuLoad}
             key={i}
           ></DropdownSubmenuItem>
         );
@@ -116,9 +121,25 @@ function DropdownSubmenu({ name, items }: { name: string; items: { name: string;
   );
 }
 
-function DropdownSubmenuItem({ name, link, isDisplayed }: { name: string; link: string; isDisplayed: boolean }) {
+function DropdownSubmenuItem({
+  name,
+  link,
+  isDisplayed,
+  isInitialLoad
+}: {
+  name: string;
+  link: string;
+  isDisplayed: boolean;
+  isInitialLoad: boolean;
+}) {
   return (
-    <div className={[styles.dropdownSubmenuItem, isDisplayed ? utilStyles.slideIn : utilStyles.slideOut].join(' ')}>
+    <div
+      className={[
+        styles.dropdownSubmenuItem,
+        isDisplayed ? utilStyles.slideIn : utilStyles.slideOut,
+        isInitialLoad ? utilStyles.hidden : ''
+      ].join(' ')}
+    >
       <Link href={link} className={styles.dropdownMenuText}>
         {name}
       </Link>
