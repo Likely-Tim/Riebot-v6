@@ -59,6 +59,20 @@
   text-decoration: none;
 }
 
+.login {
+  display: flex;
+  align-self: center;
+  color: white;
+  background-color: inherit;
+  font-weight: 700;
+  font-size: 23px;
+  text-decoration: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  padding-right: 10px;
+}
+
 .dropdownMenu {
   position: absolute;
   top: 50px;

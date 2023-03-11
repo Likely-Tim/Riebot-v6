@@ -1,15 +1,39 @@
-import React from 'react';
+import React, { use } from 'react';
 import Link from 'next/link';
 import styles from '../styles/layout.module.css';
 import utilStyles from '../styles/utils.module.css';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 function Header() {
   return (
     <div className={styles.header}>
       <Navigation></Navigation>
       <Title></Title>
+      <Login></Login>
     </div>
   );
+}
+
+function Login() {
+  const { user, error, isLoading } = useUser();
+  if (isLoading) return <p className={styles.login}>Loading...</p>;
+  if (error) {
+    console.log(error.message);
+    return <p className={styles.login}>Error</p>;
+  }
+  if (user) {
+    return (
+      <Link href={'/api/auth/logout'} className={styles.login}>
+        Logout
+      </Link>
+    );
+  } else {
+    return (
+      <Link href={'/api/auth/login'} className={styles.login}>
+        Login
+      </Link>
+    );
+  }
 }
 
 function Title() {

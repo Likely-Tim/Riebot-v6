@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Layout from '@/components/layout';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 
 export default function Home() {
   return (
@@ -11,3 +12,5 @@ export default function Home() {
     </Layout>
   );
 }
+
+export const getServerSideProps = withPageAuthRequired();
