@@ -1,4 +1,4 @@
-import React, { use } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import styles from '../styles/layout.module.css';
 import utilStyles from '../styles/utils.module.css';
@@ -70,7 +70,7 @@ function Navigation() {
   );
 }
 
-function Dropdown({ isDropdownActive, isInitialLoad }: { isDropdownActive: boolean; isInitialLoad: boolean }) {
+function Dropdown({ isDropdownActive, isInitialLoad }) {
   return (
     <div
       id="headerDropdownMenu"
@@ -98,7 +98,7 @@ function Dropdown({ isDropdownActive, isInitialLoad }: { isDropdownActive: boole
   );
 }
 
-function DropdownMenuItem({ name, link }: { name: string; link: string }) {
+function DropdownMenuItem({ name, link }) {
   return (
     <div className={styles.dropdownMenuItem}>
       <Link href={link} className={styles.dropdownMenuText}>
@@ -108,7 +108,7 @@ function DropdownMenuItem({ name, link }: { name: string; link: string }) {
   );
 }
 
-function DropdownSubmenu({ name, items }: { name: string; items: { name: string; link: string }[] }) {
+function DropdownSubmenu({ name, items }) {
   const [dropdownSubmenuClicked, setDropdownSubmenuClicked] = React.useState(false);
   const [initialSubmenuLoad, setinitialSubmenuLoad] = React.useState(true);
 
@@ -145,17 +145,7 @@ function DropdownSubmenu({ name, items }: { name: string; items: { name: string;
   );
 }
 
-function DropdownSubmenuItem({
-  name,
-  link,
-  isDisplayed,
-  isInitialLoad
-}: {
-  name: string;
-  link: string;
-  isDisplayed: boolean;
-  isInitialLoad: boolean;
-}) {
+function DropdownSubmenuItem({ name, link, isDisplayed, isInitialLoad }) {
   return (
     <div
       className={[
@@ -171,7 +161,7 @@ function DropdownSubmenuItem({
   );
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }) {
   return (
     <>
       <Header></Header>
