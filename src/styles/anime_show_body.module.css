@@ -1,0 +1,14 @@
+.animeShowBodyContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: #252629;
+  margin: 20px;
+  border-radius: 15px;
+  padding: 10px;
+  max-width: 90%;
+}
+
+.dayText {
+  padding: 15px;
+  font-size: 30px;
+}

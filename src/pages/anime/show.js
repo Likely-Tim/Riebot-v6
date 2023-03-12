@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { setCookie } from 'cookies-next';
 import MongoDb from '../../utils/mongo_db';
 import styles from '../../styles/anime/show.module.css';
+import AnimeShowBody from '../../components/anime_show_body';
 import { Dropdown, Button, Spacer } from '@nextui-org/react';
 
-function UserSelect({ users }) {
-  const [selected, setSelected] = React.useState(new Set(['Airing']));
+function UserSelect({ users, selected, setSelected }) {
   const userChoices = [{ key: 'Airing', name: 'Airing' }].concat(users);
   let userSelectionDisabled = false;
   if (userChoices.length < 2) {
@@ -21,9 +21,7 @@ function UserSelect({ users }) {
   return (
     <div className={styles.selectionContainer}>
       <Dropdown isDisabled={userSelectionDisabled}>
-        <Dropdown.Button disabled={userSelectionDisabled}>
-          {userKeyMap.get(selected.values().next().value)}
-        </Dropdown.Button>
+        <Dropdown.Button disabled={userSelectionDisabled}>{userKeyMap.get(getSetFirstValue(selected))}</Dropdown.Button>
         <Dropdown.Menu
           selectionMode="single"
           disallowEmptySelection
@@ -44,16 +42,18 @@ function UserSelect({ users }) {
 }
 
 export default function Home({ users }) {
+  const [selected, setSelected] = React.useState(new Set(['Airing']));
   setCookie('redirect', '/anime/show');
 
   return (
-    <>
+    <div className={styles.pageContainer}>
       <Head>
         <title>Riebot</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <UserSelect users={users}></UserSelect>
-    </>
+      <UserSelect users={users} selected={selected} setSelected={setSelected}></UserSelect>
+      <AnimeShowBody selectedUser={getSetFirstValue(selected)}></AnimeShowBody>
+    </div>
   );
 }
 
@@ -64,4 +64,8 @@ export async function getServerSideProps() {
     delete user['_id'];
   }
   return { props: { users: users } };
+}
+
+function getSetFirstValue(set) {
+  return set.values().next().value;
 }
