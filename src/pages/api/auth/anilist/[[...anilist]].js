@@ -21,7 +21,7 @@ export default async function handler(request, response) {
       const oauth = await anilistAccept(code);
       const user = await Anilist.getAuthenticatedUser(oauth.access_token);
       const expireTime = Date.now() + oauth.expires_in * 1000;
-      await MongoDb.insertToken(`anilist_${user.id}_${user.name}`, oauth.access_token, oauth.refresh_token, expireTime);
+      await MongoDb.insertToken(`anilist_${user.id}`, oauth.access_token, oauth.refresh_token, expireTime);
       await MongoDb.insertAnilistUser(user.id, user.name);
       if (request.cookies.redirect) {
         return response.redirect(`${request.cookies.redirect}?anilistAuth=successful`);
