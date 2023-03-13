@@ -7,7 +7,7 @@ class MongoDb {
     this.database = this.client.db('riebot');
   }
 
-  async insertToken(key, accessToken, refreshToken, expireTime) {
+  async insertToken(key, accessToken, refreshToken, expireTime, oidc) {
     const tokens = this.database.collection('tokens');
     const filter = { _id: key };
     const document = {
@@ -15,7 +15,8 @@ class MongoDb {
         _id: key,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        expireTime: expireTime
+        expireTime: expireTime,
+        oidc: oidc
       }
     };
     const options = { upsert: true };

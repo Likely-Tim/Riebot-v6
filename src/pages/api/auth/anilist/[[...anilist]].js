@@ -8,7 +8,6 @@ const ANILIST_SECRET = process.env.ANILIST_SECRET;
 
 export default async function handler(request, response) {
   const { anilist } = request.query;
-  console.log(request.cookies);
 
   if (!anilist) {
     response.redirect(

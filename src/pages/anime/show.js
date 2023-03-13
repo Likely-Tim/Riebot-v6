@@ -7,7 +7,7 @@ import styles from '../../styles/anime/show.module.css';
 import AnimeShowBody from '../../components/anime_show_body';
 import { Dropdown, Button, Spacer } from '@nextui-org/react';
 
-function UserSelect({ users, selected, setSelected }) {
+function UserSelect({ users, selected, setSelected, sort, setSort }) {
   const userChoices = [{ key: 'Airing', name: 'Airing' }].concat(users);
   let userSelectionDisabled = false;
   if (userChoices.length < 2) {
@@ -16,6 +16,14 @@ function UserSelect({ users, selected, setSelected }) {
   const userKeyMap = new Map();
   for (const userChoice of userChoices) {
     userKeyMap.set(String(userChoice.key), userChoice.name);
+  }
+
+  function checkSortDisabled(user) {
+    if (user === 'Airing') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   return (
@@ -34,6 +42,22 @@ function UserSelect({ users, selected, setSelected }) {
         </Dropdown.Menu>
       </Dropdown>
       <Spacer></Spacer>
+      <Dropdown isDisabled={checkSortDisabled(getSetFirstValue(selected))}>
+        <Dropdown.Button disabled={checkSortDisabled(getSetFirstValue(selected))}>
+          {getSetFirstValue(sort)}
+        </Dropdown.Button>
+        <Dropdown.Menu
+          selectionMode="single"
+          disallowEmptySelection
+          selectedKeys={sort}
+          disabledKeys={sort}
+          onSelectionChange={setSort}
+        >
+          <Dropdown.Item key={'Day'}>Day</Dropdown.Item>
+          <Dropdown.Item key={'Time'}>Time</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      <Spacer></Spacer>
       <Link href="/api/auth/anilist">
         <Button auto>Add User</Button>
       </Link>
@@ -43,6 +67,8 @@ function UserSelect({ users, selected, setSelected }) {
 
 export default function Home({ users }) {
   const [selected, setSelected] = React.useState(new Set(['Airing']));
+  const [sort, setSort] = React.useState(new Set(['Day']));
+
   setCookie('redirect', '/anime/show');
 
   return (
@@ -51,8 +77,14 @@ export default function Home({ users }) {
         <title>Riebot</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <UserSelect users={users} selected={selected} setSelected={setSelected}></UserSelect>
-      <AnimeShowBody selectedUser={getSetFirstValue(selected)}></AnimeShowBody>
+      <UserSelect
+        users={users}
+        selected={selected}
+        setSelected={setSelected}
+        sort={sort}
+        setSort={setSort}
+      ></UserSelect>
+      <AnimeShowBody selectedUser={getSetFirstValue(selected)} sort={getSetFirstValue(sort)}></AnimeShowBody>
     </div>
   );
 }
