@@ -1,164 +1,150 @@
 import React from 'react';
-import Link from 'next/link';
+import { useDisclosure } from '@mantine/hooks';
 import styles from '../styles/layout.module.css';
-import utilStyles from '../styles/utils.module.css';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { Flex, Burger, Stack, NavLink, Anchor } from '@mantine/core';
+
+const items = [
+  {
+    isSubmenu: false,
+    label: 'Home',
+    link: '/'
+  },
+  {
+    isSubmenu: false,
+    label: 'Logs',
+    link: '/logs'
+  },
+  {
+    isSubmenu: true,
+    label: 'Discord',
+    submenuItems: [
+      {
+        label: 'Spotify',
+        link: '/auth/discord?task=spotify'
+      }
+    ]
+  },
+  {
+    isSubmenu: true,
+    label: 'Authentication',
+    submenuItems: [
+      {
+        label: 'Spotify',
+        link: '/auth/spotify'
+      },
+      {
+        label: 'MyAnimeList',
+        link: 'auth/mal'
+      }
+    ]
+  },
+  {
+    isSubmenu: true,
+    label: 'Anime',
+    submenuItems: [
+      {
+        label: 'Shows',
+        link: '/anime/show'
+      }
+    ]
+  }
+];
 
 function Header() {
   return (
-    <div className={styles.header}>
+    <Flex bg="#333" p={8} align="center">
       <Navigation></Navigation>
       <Title></Title>
       <Login></Login>
-    </div>
+    </Flex>
   );
 }
 
 function Login() {
   const { user, error, isLoading } = useUser();
-  if (isLoading) return <p className={styles.login}>Loading...</p>;
+  if (isLoading)
+    return (
+      <Anchor weight={900} fz={25} c="white" ml="auto" align="center" unstyle>
+        Loading...
+      </Anchor>
+    );
   if (error) {
     console.log(error.message);
-    return <p className={styles.login}>Error</p>;
+    return (
+      <Anchor weight={900} fz={25} c="white" ml="auto" align="center" unstyle>
+        Error
+      </Anchor>
+    );
   }
   if (user) {
     return (
-      <Link href={'/api/auth/logout'} className={styles.login}>
+      <Anchor href={'/api/auth/logout'} weight={900} fz={25} c="white" ml="auto" align="center" unstyled>
         Logout
-      </Link>
+      </Anchor>
     );
   } else {
     return (
-      <Link href={'/api/auth/login'} className={styles.login}>
+      <Anchor href={'/api/auth/login'} weight={900} fz={25} c="white" align="center" unstyled>
         Login
-      </Link>
+      </Anchor>
     );
   }
 }
 
 function Title() {
   return (
-    <Link href={'/'} className={styles.title}>
+    <Anchor href="/" weight={900} fz={30} c="white" align="center" pl={10} unstyled>
       Riebot
-    </Link>
+    </Anchor>
   );
 }
 
 function Navigation() {
-  const [isDropdownActive, setDropdownActive] = React.useState(false);
-  const [isInitialLoad, setInitialLoad] = React.useState(true);
-
-  function handleDropdownClick() {
-    if (isInitialLoad) {
-      setInitialLoad(!isInitialLoad);
-    }
-    setDropdownActive(!isDropdownActive);
-  }
-
+  const [opened, { toggle }] = useDisclosure(false);
   return (
     <>
-      <div
-        onClick={handleDropdownClick}
-        className={[styles.hamburgerLineContainer, isDropdownActive ? styles.hamburgerClicked : ''].join(' ')}
-      >
-        <hr id={styles.hamburgerLineOne} className={styles.hamburgerLines}></hr>
-        <hr id={styles.hamburgerLineTwo} className={styles.hamburgerLines}></hr>
-        <hr id={styles.hamburgerLineThree} className={styles.hamburgerLines}></hr>
-      </div>
-      <Dropdown isDropdownActive={isDropdownActive} isInitialLoad={isInitialLoad}></Dropdown>
+      <Burger opened={opened} onClick={toggle} size={28} pt={10}></Burger>
+      <Dropdown opened={opened}></Dropdown>
     </>
   );
 }
 
-function Dropdown({ isDropdownActive, isInitialLoad }) {
+function Dropdown({ opened }) {
   return (
-    <div
-      id="headerDropdownMenu"
-      className={[
-        styles.dropdownMenu,
-        isDropdownActive ? utilStyles.fadeIn : utilStyles.fadeOut,
-        isInitialLoad ? utilStyles.hidden : ''
-      ].join(' ')}
-    >
-      <DropdownMenuItem name="Home" link="/"></DropdownMenuItem>
-      <DropdownMenuItem name="Logs" link="/logs"></DropdownMenuItem>
-      <DropdownSubmenu
-        name="Discord"
-        items={[{ name: 'Spotify', link: '/auth/discord?task=spotify' }]}
-      ></DropdownSubmenu>
-      <DropdownSubmenu
-        name="Authentication"
-        items={[
-          { name: 'Spotify', link: '/auth/spotify' },
-          { name: 'MyAnimeList', link: '/auth/mal' }
-        ]}
-      ></DropdownSubmenu>
-      <DropdownSubmenu name="Anime" items={[{ name: 'Shows', link: '/anime/show' }]}></DropdownSubmenu>
-    </div>
+    <Stack pos="absolute" top={50} miw={200} bg="#292929" display={opened ? 'block' : 'none'}>
+      {items.map((item) => (
+        <DropdownMenuItem item={item}></DropdownMenuItem>
+      ))}
+    </Stack>
   );
 }
 
-function DropdownMenuItem({ name, link }) {
-  return (
-    <div className={styles.dropdownMenuItem}>
-      <Link href={link} className={styles.dropdownMenuText}>
-        {name}
-      </Link>
-    </div>
-  );
-}
-
-function DropdownSubmenu({ name, items }) {
-  const [dropdownSubmenuClicked, setDropdownSubmenuClicked] = React.useState(false);
-  const [initialSubmenuLoad, setinitialSubmenuLoad] = React.useState(true);
-
-  function handleClick() {
-    if (initialSubmenuLoad) {
-      setinitialSubmenuLoad(!initialSubmenuLoad);
-    }
-    setDropdownSubmenuClicked(!dropdownSubmenuClicked);
+function DropdownMenuItem({ item }) {
+  if (item.isSubmenu) {
+    return (
+      <NavLink label={item.label} classNames={{ label: styles.dropdownSubmenus, root: styles.itemBorderBottom }}>
+        {item.submenuItems.map((submenuItem) => (
+          <NavLink
+            label={submenuItem.label}
+            component="a"
+            href={submenuItem.link}
+            classNames={{ label: styles.dropdownLinks, root: styles.submenuItemBorder }}
+          ></NavLink>
+        ))}
+      </NavLink>
+    );
+  } else {
+    return (
+      <NavLink
+        key={item.label}
+        label={item.label}
+        component="a"
+        href={item.link}
+        classNames={{ label: styles.dropdownLinks, root: styles.itemBorderBottom }}
+      ></NavLink>
+    );
   }
-
-  return (
-    <div className={styles.dropdownSubMenu}>
-      <div onClick={handleClick} className={styles.dropdownMenuItem}>
-        <p className={styles.dropdownMenuText}>{name}</p>
-        <p
-          id={`dropdownSubmenuArrow_${name}`}
-          className={[styles.dropdownArrow, dropdownSubmenuClicked ? utilStyles.rotate : ''].join(' ')}
-        >
-          {'>'}
-        </p>
-      </div>
-      {items.map((item, i) => {
-        return (
-          <DropdownSubmenuItem
-            name={item.name}
-            link={item.link}
-            isDisplayed={dropdownSubmenuClicked}
-            isInitialLoad={initialSubmenuLoad}
-            key={i}
-          ></DropdownSubmenuItem>
-        );
-      })}
-    </div>
-  );
-}
-
-function DropdownSubmenuItem({ name, link, isDisplayed, isInitialLoad }) {
-  return (
-    <div
-      className={[
-        styles.dropdownSubmenuItem,
-        isDisplayed ? utilStyles.slideIn : utilStyles.slideOut,
-        isInitialLoad ? utilStyles.hidden : ''
-      ].join(' ')}
-    >
-      <Link href={link} className={styles.dropdownMenuText}>
-        {name}
-      </Link>
-    </div>
-  );
 }
 
 export default function Layout({ children }) {
