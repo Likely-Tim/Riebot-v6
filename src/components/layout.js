@@ -85,7 +85,7 @@ function Login() {
     );
   } else {
     return (
-      <Anchor href={'/api/auth/login'} weight={900} fz={25} c="white" align="center" unstyled>
+      <Anchor href={'/api/auth/login'} weight={900} fz={25} c="white" ml="auto" align="center" unstyled>
         Login
       </Anchor>
     );
