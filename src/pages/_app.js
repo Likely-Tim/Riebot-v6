@@ -1,8 +1,8 @@
 import '../styles/global.css';
 import Layout from '../components/layout';
-import NextNProgress from 'nextjs-progressbar';
 import { MantineProvider } from '@mantine/core';
 import { Analytics } from '@vercel/analytics/react';
+import { Notifications } from '@mantine/notifications';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 
 export default function App({ Component, pageProps }) {
@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }) {
     <UserProvider>
       <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme: 'dark' }}>
         <Layout>
-          <NextNProgress />
+          <Notifications />
           <Component {...pageProps} />
           <Analytics />
         </Layout>

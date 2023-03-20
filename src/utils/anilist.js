@@ -186,7 +186,7 @@ class Anilist {
   }
 
   async updateMedia(accessToken, mediaId, progress) {
-    logger.info(`[Anilist] Updating ${mediaId} with progress ${progress}`);
+    console.info(`[Anilist] Updating ${mediaId} with progress ${progress}`);
     const search = `
       mutation {
         SaveMediaListEntry(mediaId: ${mediaId}, progress: ${progress}) {
@@ -197,9 +197,10 @@ class Anilist {
     const url = 'https://graphql.anilist.co';
     let response = await sendAuthenticatedPostRequest(url, search, accessToken);
     if (response.ok) {
+      console.log(`[Anilist] Updated`);
       return true;
     } else {
-      return false;
+      throw new Error(`[Anilist] Failed to Update`);
     }
   }
 }

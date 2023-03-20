@@ -7,7 +7,7 @@ class MongoDb {
     this.database = this.client.db('riebot');
   }
 
-  async insertToken(key, accessToken, refreshToken, expireTime, oidc) {
+  async insertToken(key, accessToken, refreshToken, expireTime, auth0Id) {
     const tokens = this.database.collection('tokens');
     const filter = { _id: key };
     const document = {
@@ -16,7 +16,7 @@ class MongoDb {
         accessToken: accessToken,
         refreshToken: refreshToken,
         expireTime: expireTime,
-        oidc: oidc
+        auth0Id: auth0Id
       }
     };
     const options = { upsert: true };
@@ -52,6 +52,17 @@ class MongoDb {
     const anilistUsers = this.database.collection('anilistUsers');
     const users = await anilistUsers.find({}).toArray();
     return users;
+  }
+
+  async getAnilistAccessToken(userId, auth0Id) {
+    const tokens = this.database.collection('tokens');
+    const filter = { _id: `anilist_${userId}` };
+    const token = await tokens.findOne(filter);
+    if (token.auth0Id !== auth0Id) {
+      throw new Error(`Not Authorized`);
+    } else {
+      return token.accessToken;
+    }
   }
 }
 

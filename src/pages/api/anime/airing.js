@@ -1,7 +1,6 @@
 import Anilist from '../../../utils/anilist';
 
 export default async function handler(request, response) {
-  console.log(request.query);
   const startTime = Number(request.query.start);
   const endTime = Number(request.query.end);
   if (!startTime || !endTime) {

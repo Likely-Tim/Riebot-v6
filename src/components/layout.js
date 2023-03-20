@@ -1,4 +1,5 @@
 import React from 'react';
+import { setCookie } from 'cookies-next';
 import { useDisclosure } from '@mantine/hooks';
 import styles from '../styles/layout.module.css';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -53,7 +54,7 @@ const items = [
 
 function Header() {
   return (
-    <Flex bg="#333" p={8} align="center">
+    <Flex bg="#333" p={8} align="center" mb={15}>
       <Navigation></Navigation>
       <Title></Title>
       <Login></Login>
@@ -62,6 +63,7 @@ function Header() {
 }
 
 function Login() {
+  setCookie('auth0Id', null);
   const { user, error, isLoading } = useUser();
   if (isLoading)
     return (
@@ -70,7 +72,6 @@ function Login() {
       </Anchor>
     );
   if (error) {
-    console.log(error.message);
     return (
       <Anchor weight={900} fz={25} c="white" ml="auto" align="center" unstyle>
         Error
@@ -78,6 +79,7 @@ function Login() {
     );
   }
   if (user) {
+    setCookie('auth0Id', user.sub);
     return (
       <Anchor href={'/api/auth/logout'} weight={900} fz={25} c="white" ml="auto" align="center" unstyled>
         Logout
@@ -112,7 +114,14 @@ function Navigation() {
 
 function Dropdown({ opened }) {
   return (
-    <Stack pos="absolute" top={50} miw={200} bg="#292929" display={opened ? 'block' : 'none'}>
+    <Stack
+      pos="absolute"
+      top={50}
+      miw={200}
+      bg="#292929"
+      display={opened ? 'block' : 'none'}
+      sx={{ boxShadow: '0px 8px 16px 0px rgba(0, 0, 0, 0.6)' }}
+    >
       {items.map((item) => (
         <DropdownMenuItem item={item}></DropdownMenuItem>
       ))}
@@ -123,9 +132,14 @@ function Dropdown({ opened }) {
 function DropdownMenuItem({ item }) {
   if (item.isSubmenu) {
     return (
-      <NavLink label={item.label} classNames={{ label: styles.dropdownSubmenus, root: styles.itemBorderBottom }}>
+      <NavLink
+        key={item.label}
+        label={item.label}
+        classNames={{ label: styles.dropdownSubmenus, root: styles.itemBorderBottom }}
+      >
         {item.submenuItems.map((submenuItem) => (
           <NavLink
+            key={`${item.label}_${submenuItem.label}`}
             label={submenuItem.label}
             component="a"
             href={submenuItem.link}
