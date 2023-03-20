@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getCookie } from 'cookies-next';
 import { ExposurePlus1, X, Check } from 'tabler-icons-react';
 import { notifications } from '@mantine/notifications';
-import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button } from '@mantine/core';
+import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button, Anchor } from '@mantine/core';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 const swrOptions = { revalidateOnFocus: false };
@@ -114,32 +114,36 @@ function MediaCard({ media, userId }) {
     <Grid.Col span="content">
       <Stack>
         <Indicator size={14} color="red" offset={2} withBorder disabled={!unwatched}>
-          <Card
-            component="a"
-            href={media.siteUrl}
-            target="_blank"
-            radius={10}
-            padding={0}
-            sx={unwatched ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } : {}}
-          >
+          <Card radius={10} padding={0} w={125} h={175}>
             <Card.Section>
-              <Image src={media.coverImage.extraLarge} width={125} height={unwatched ? 155 : 175} />
+              <Anchor href={media.siteUrl} target="_blank">
+                <Image src={media.coverImage.extraLarge} radius={10} fit="cover" height={175} />
+              </Anchor>
             </Card.Section>
+            <Button
+              display={unwatched ? 'absolute' : 'none'}
+              fullWidth
+              compact
+              bottom={20}
+              h={20}
+              sx={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, zIndex: 5 }}
+              onClick={handlerIncrement}
+              loaderPosition="center"
+              loading={updating}
+            >
+              <ExposurePlus1 size={20} />
+            </Button>
+            <Button
+              display={unwatched ? 'absolute' : 'none'}
+              opacity={0}
+              fullWidth
+              compact
+              bottom={40}
+              h={20}
+              sx={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, zIndex: 4 }}
+            />
           </Card>
         </Indicator>
-        <Button
-          display={unwatched ? 'absolute' : 'none'}
-          fullWidth
-          compact
-          bottom={15.8}
-          h={20}
-          sx={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-          onClick={handlerIncrement}
-          loaderPosition="center"
-          loading={updating}
-        >
-          <ExposurePlus1 size={20} />
-        </Button>
       </Stack>
     </Grid.Col>
   );
