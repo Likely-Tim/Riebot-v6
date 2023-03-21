@@ -1,4 +1,5 @@
 import '../styles/global.css';
+import { SWRConfig } from 'swr';
 import Layout from '../components/layout';
 import { MantineProvider } from '@mantine/core';
 import { Analytics } from '@vercel/analytics/react';
@@ -9,11 +10,13 @@ export default function App({ Component, pageProps }) {
   return (
     <UserProvider>
       <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme: 'dark' }}>
-        <Layout>
-          <Notifications />
-          <Component {...pageProps} />
-          <Analytics />
-        </Layout>
+        <SWRConfig value={{ fetcher: (...args) => fetch(...args).then((res) => res.json()), revalidateOnFocus: false }}>
+          <Layout>
+            <Notifications />
+            <Component {...pageProps} />
+            <Analytics />
+          </Layout>
+        </SWRConfig>
       </MantineProvider>
     </UserProvider>
   );

@@ -1,14 +1,11 @@
 import useSWR from 'swr';
 import fetch from 'node-fetch';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { getCookie } from 'cookies-next';
 import { ExposurePlus1, X, Check } from 'tabler-icons-react';
 import { notifications } from '@mantine/notifications';
 import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button, Anchor } from '@mantine/core';
-
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
-const swrOptions = { revalidateOnFocus: false };
 
 const mediaAiringDayMap = new Map([
   [0, 'Sunday'],
@@ -31,9 +28,7 @@ export default function AnimeShowBody({ selectedUser, sortByDay }) {
     const today = getTodayStart();
     const endOfWeek = getEndOfWeek();
     const { data, error } = useSWR(
-      `/api/anime/airing?start=${today.getTime() / 1000}&end=${endOfWeek.getTime() / 1000}`,
-      fetcher,
-      swrOptions
+      `/api/anime/airing?start=${today.getTime() / 1000}&end=${endOfWeek.getTime() / 1000}`
     );
 
     if (!data) {
@@ -41,7 +36,11 @@ export default function AnimeShowBody({ selectedUser, sortByDay }) {
     }
     mediaSorted = mediaSortAiring(data.medias);
   } else {
-    const { data, error } = useSWR(`/api/anime/watching?userId=${selectedUser}`, fetcher, swrOptions);
+    const { data, error } = useSWR(`/api/anime/watching?userId=${selectedUser}`, {
+      refreshInterval: 60000,
+      revalidateOnFocus: true,
+      dedupingInterval: 30000
+    });
 
     if (!data) {
       return loading();
@@ -79,8 +78,16 @@ function TopicContainer({ topic, medias, userId }) {
 }
 
 function MediaCard({ media, userId }) {
-  const [unwatched, setUnwatched] = useState(checkProgress(media));
+  const [unwatched, setUnwatched] = useState(false);
   const [updating, setUpdating] = useState(false);
+
+  if (media.id === 147216) {
+    console.log(media);
+  }
+
+  useEffect(() => {
+    setUnwatched(checkProgress(media));
+  }, [media]);
 
   function checkProgress(media) {
     try {

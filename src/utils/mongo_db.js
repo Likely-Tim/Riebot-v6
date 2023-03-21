@@ -70,6 +70,7 @@ class MongoDb {
   async getAllAnilistUsers() {
     const anilistUsers = this.database.collection('anilistUsers');
     const users = await anilistUsers.find({}).toArray();
+    console.log(`[MongoDb] Got all anilist users`);
     return users;
   }
 
@@ -80,6 +81,7 @@ class MongoDb {
     if (token.auth0Id !== auth0Id) {
       throw new Error(`Not Authorized`);
     } else {
+      console.log(`[MongoDb] Got anilist access token`);
       return token.accessToken;
     }
   }
