@@ -44,7 +44,26 @@ class MongoDb {
         `[MongoDb] Anilist user saved with _id: ${result.upsertedId}, modifiedCount: ${result.modifiedCount}`
       );
     } else {
-      throw new Error('[MongoDb] Trouble saving token');
+      throw new Error('[MongoDb] Trouble saving anilist user');
+    }
+  }
+
+  async insertCache(key, info, ttl) {
+    const cache = this.database.collection('cache');
+    const filter = { _id: key };
+    const document = {
+      $set: {
+        _id: key,
+        info: info,
+        expireAt: new Date(new Date().getTime() + ttl * 1000)
+      }
+    };
+    const options = { upsert: true };
+    const result = await cache.updateOne(filter, document, options);
+    if (result.acknowledged) {
+      console.info(`[MongoDb] Cache saved with _id: ${result.upsertedId}, modifiedCount: ${result.modifiedCount}`);
+    } else {
+      throw new Error('[MongoDb] Trouble saving cache');
     }
   }
 
@@ -62,6 +81,17 @@ class MongoDb {
       throw new Error(`Not Authorized`);
     } else {
       return token.accessToken;
+    }
+  }
+
+  async getCache(key) {
+    const cache = this.database.collection('cache');
+    const filter = { _id: key };
+    const object = await cache.findOne(filter);
+    if (object) {
+      return object.info;
+    } else {
+      return false;
     }
   }
 }
