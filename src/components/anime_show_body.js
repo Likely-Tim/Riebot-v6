@@ -148,7 +148,7 @@ function MediaCard({ media, userId }) {
             left={30}
             size={15}
             withBorder
-            disable={airing}
+            disabled={airing}
           ></Indicator>
           <Card radius={10} padding={0} w={125} h={175}>
             <Card.Section>
