@@ -142,7 +142,14 @@ function MediaCard({ media, userId }) {
     <Grid.Col span="content">
       <Stack>
         <Indicator size={14} color="red" offset={2} withBorder disabled={!unwatched} processing>
-          <Indicator label={media.status} position="top-start" left={30} size={15} withBorder></Indicator>
+          <Indicator
+            label={media.status}
+            position="top-start"
+            left={30}
+            size={15}
+            withBorder
+            disable={airing}
+          ></Indicator>
           <Card radius={10} padding={0} w={125} h={175}>
             <Card.Section>
               <Anchor href={media.siteUrl} target="_blank">
