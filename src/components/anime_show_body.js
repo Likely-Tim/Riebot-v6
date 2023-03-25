@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getCookie } from 'cookies-next';
 import { ExposurePlus1, X, Check } from 'tabler-icons-react';
 import { notifications } from '@mantine/notifications';
-import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button, Anchor } from '@mantine/core';
+import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button, Anchor, Badge } from '@mantine/core';
 
 const mediaAiringDayMap = new Map([
   [0, 'Sunday'],
@@ -93,6 +93,18 @@ function TopicContainer({ topic, medias, userId }) {
 function MediaCard({ media, userId }) {
   const [unwatched, setUnwatched] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [airing, setAiring] = useState(true);
+
+  function checkAiring() {
+    if (userId === 'Airing') {
+      setAiring(true);
+    } else {
+      setAiring(false);
+    }
+  }
+  useEffect(() => {
+    checkAiring();
+  }, [userId]);
 
   useEffect(() => {
     setUnwatched(checkProgress(media));
@@ -129,7 +141,8 @@ function MediaCard({ media, userId }) {
   return (
     <Grid.Col span="content">
       <Stack>
-        <Indicator size={14} color="red" offset={2} withBorder disabled={!unwatched}>
+        <Indicator size={14} color="red" offset={2} withBorder disabled={!unwatched} processing>
+          <Indicator label={media.status} position="top-start" left={30} size={15} withBorder></Indicator>
           <Card radius={10} padding={0} w={125} h={175}>
             <Card.Section>
               <Anchor href={media.siteUrl} target="_blank">

@@ -111,6 +111,7 @@ class Anilist {
                 id
                 popularity
                 format
+                status
                 title {
                   romaji
                   english
@@ -173,7 +174,8 @@ class Anilist {
             coverImage: media.media.coverImage,
             siteUrl: media.media.siteUrl,
             stats: media.media.stats,
-            popularity: media.media.popularity
+            popularity: media.media.popularity,
+            status: media.media.status
           });
         }
         return medias;
