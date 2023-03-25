@@ -23,6 +23,22 @@ const mediaAiringDayMap = new Map([
 ]);
 
 export default function AnimeShowBody({ selectedUser, sortByDay }) {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [dayDisplayOrder, setDayDisplayOrder] = useState([]);
+
+  useEffect(() => {
+    const correctedDayOrder = [];
+    const todayInt = new Date().getDay();
+    for (let i = 0; i < 7; i++) {
+      correctedDayOrder.push((todayInt + i) % 7);
+    }
+    correctedDayOrder.push(...[7, 8, 9, 10, 11]);
+    setDayDisplayOrder(correctedDayOrder);
+    setTimeout(() => {
+      setCurrentDate(new Date());
+    }, 60000);
+  }, [currentDate]);
+
   let mediaSorted = {};
   if (selectedUser === 'Airing') {
     const today = getTodayStart();
@@ -47,14 +63,11 @@ export default function AnimeShowBody({ selectedUser, sortByDay }) {
     }
     mediaSorted = mediaSortUser(data.medias, sortByDay);
   }
+
   return (
     <Stack p={15} bg="#252629" sx={{ borderRadius: 20 }} spacing="xl" pl={25} pr={25}>
-      {Object.keys(mediaSorted).map((key) => (
-        <TopicContainer
-          topic={mediaAiringDayMap.get(Number(key))}
-          medias={mediaSorted[key]}
-          userId={selectedUser}
-        ></TopicContainer>
+      {dayDisplayOrder.map((key) => (
+        <TopicContainer key={key} topic={key} medias={mediaSorted[key]} userId={selectedUser}></TopicContainer>
       ))}
     </Stack>
   );
@@ -67,7 +80,7 @@ function TopicContainer({ topic, medias, userId }) {
 
   return (
     <Stack>
-      <Title color="white">{topic}</Title>
+      <Title color="white">{mediaAiringDayMap.get(Number(topic))}</Title>
       <Grid columns={10}>
         {medias.map((media) => (
           <MediaCard key={media.id} media={media} userId={userId}></MediaCard>
@@ -80,10 +93,6 @@ function TopicContainer({ topic, medias, userId }) {
 function MediaCard({ media, userId }) {
   const [unwatched, setUnwatched] = useState(false);
   const [updating, setUpdating] = useState(false);
-
-  if (media.id === 147216) {
-    console.log(media);
-  }
 
   useEffect(() => {
     setUnwatched(checkProgress(media));
