@@ -94,23 +94,18 @@ function MediaCard({ media, userId }) {
   const [unwatched, setUnwatched] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [airing, setAiring] = useState(true);
+  const [statusColor, setStatusColor] = useState('');
 
-  function checkAiring() {
-    if (userId === 'Airing') {
-      setAiring(true);
-    } else {
-      setAiring(false);
-    }
-  }
   useEffect(() => {
     checkAiring();
   }, [userId]);
 
   useEffect(() => {
-    setUnwatched(checkProgress(media));
+    setUnwatched(checkProgress());
+    checkStatus();
   }, [media]);
 
-  function checkProgress(media) {
+  function checkProgress() {
     try {
       if (media.progress < media.nextAiringEpisode.episode - 1) {
         return true;
@@ -119,6 +114,26 @@ function MediaCard({ media, userId }) {
       }
     } catch (err) {
       return false;
+    }
+  }
+
+  function checkStatus() {
+    if (media.status === 'RELEASING') {
+      setStatusColor('blue');
+    } else if (media.status === 'FINISHED') {
+      setStatusColor('green');
+    } else if (media.status === 'NOT_YET_RELEASED') {
+      setStatusColor('violet');
+    } else {
+      setStatusColor('yellow');
+    }
+  }
+
+  function checkAiring() {
+    if (userId === 'Airing') {
+      setAiring(true);
+    } else {
+      setAiring(false);
     }
   }
 
@@ -148,6 +163,7 @@ function MediaCard({ media, userId }) {
             left={30}
             size={15}
             withBorder
+            color={statusColor}
             disabled={airing}
           ></Indicator>
           <Card radius={10} padding={0} w={125} h={175}>
