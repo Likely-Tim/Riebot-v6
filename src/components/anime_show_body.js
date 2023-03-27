@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getCookie } from 'cookies-next';
 import { ExposurePlus1, X, Check } from 'tabler-icons-react';
 import { notifications } from '@mantine/notifications';
-import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button, Anchor, Badge } from '@mantine/core';
+import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button, Anchor, Affix } from '@mantine/core';
 
 const mediaAiringDayMap = new Map([
   [0, 'Sunday'],
@@ -140,8 +140,9 @@ function MediaCard({ media, userId }) {
   function handlerIncrement() {
     const auth0Id = getCookie('auth0Id');
     setUpdating(true);
-    sendApiCall(
-      `/api/anime/watched?auth0Id=${auth0Id}&userId=${userId}&animeId=${media.id}&progress=${media.progress + 1}`
+    addAnimeProgress(
+      `/api/anime/watched?auth0Id=${auth0Id}&userId=${userId}&animeId=${media.id}&progress=${media.progress + 1}`,
+      media
     ).then((res) => {
       setUpdating(false);
       if (res) {
@@ -275,13 +276,14 @@ function loading() {
   );
 }
 
-async function sendApiCall(url) {
+async function addAnimeProgress(url, media) {
   const id = uuidv4();
   notifications.show({
     id: id,
-    title: 'Updating',
+    title: `Updating ${media.title.romaji} to ${media.progress + 1}`,
     loading: true,
-    sx: { borderWidth: 1, borderColor: '#3ca2c3' }
+    sx: { borderWidth: 1, borderColor: '#3ca2c3' },
+    autoClose: false
   });
   const response = await fetch(url, {
     method: 'GET'
@@ -292,7 +294,8 @@ async function sendApiCall(url) {
       title: `Updated`,
       color: 'green',
       icon: <Check />,
-      sx: { borderWidth: 1, borderColor: 'green' }
+      sx: { borderWidth: 1, borderColor: 'green' },
+      autoClose: true
     });
     return true;
   } else {
@@ -301,7 +304,8 @@ async function sendApiCall(url) {
       title: `${response.statusText}`,
       color: 'red',
       icon: <X />,
-      sx: { borderWidth: 1, borderColor: 'red' }
+      sx: { borderWidth: 1, borderColor: 'red' },
+      autoClose: true
     });
     return false;
   }
