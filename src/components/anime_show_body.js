@@ -1,10 +1,11 @@
 import useSWR from 'swr';
 import fetch from 'node-fetch';
-import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { getCookie } from 'cookies-next';
-import { ExposurePlus1, X, Check } from 'tabler-icons-react';
+import { useTimer } from 'react-timer-hook';
+import { useState, useEffect } from 'react';
 import { notifications } from '@mantine/notifications';
+import { ExposurePlus1, X, Check } from 'tabler-icons-react';
 import { Stack, Title, Grid, Card, Image, Loader, Indicator, Button, Anchor, Affix } from '@mantine/core';
 
 const mediaAiringDayMap = new Map([
@@ -167,6 +168,7 @@ function MediaCard({ media, userId }) {
             color={statusColor}
             disabled={airing}
           ></Indicator>
+          <Timer media={media}></Timer>
           <Card radius={10} padding={0} w={125} h={175}>
             <Card.Section>
               <Anchor href={media.siteUrl} target="_blank">
@@ -200,6 +202,33 @@ function MediaCard({ media, userId }) {
       </Stack>
     </Grid.Col>
   );
+}
+
+function Timer({ media }) {
+  let airingTime = 0;
+  try {
+    airingTime = media.nextAiringEpisode.airingAt;
+  } catch (e) {}
+
+  if (airingTime) {
+    const { seconds, minutes, hours, days } = useTimer({
+      expiryTimestamp: new Date(airingTime * 1000),
+      autoStart: true
+    });
+    return (
+      <Indicator
+        withBorder
+        color="gray"
+        left={33}
+        top={145}
+        size={13}
+        w={50}
+        label={`${days}d ${hours}h ${minutes}m`}
+      ></Indicator>
+    );
+  } else {
+    return <></>;
+  }
 }
 
 function getTodayStart() {
