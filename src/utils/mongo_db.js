@@ -1,9 +1,8 @@
 import { MongoClient } from 'mongodb';
 
-const MONGO_CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING;
 class MongoDb {
   constructor() {
-    this.client = new MongoClient(MONGO_CONNECTION_STRING);
+    this.client = new MongoClient(process.env.MONGO_CONNECTION_STRING);
     this.database = this.client.db('riebot');
   }
 
